@@ -12,6 +12,7 @@ class FormularioAgregarFila extends HTMLElement {
         this.innerHTML = `
             ${configuracionCampos.map(campo => `<input type="${campo.tipo || 'text'}" id="${campo.nombre}" placeholder="${campo.placeholder}">`).join('')}
             <button>Agregar</button>
+            <mensaje-error mensaje="" id="mensajeError1"></mensaje-error>
         `;
     }
 
@@ -22,10 +23,9 @@ class FormularioAgregarFila extends HTMLElement {
         const targetTable = document.querySelector(`#${targetTableId}`);
 
         configuracionCampos.forEach(campo => {
-            const input = this.querySelector(`#${campo.nombre}`);
-            const valor = input.value;
+            const valor = this.querySelector(`#${campo.nombre}`).value;
             if (!campo.validacion(valor)) {
-                alert(campo.mensajeError);
+                this.mostrarMensajeError(campo.mensajeError);
                 esValido = false;
                 return;
             }
@@ -41,5 +41,17 @@ class FormularioAgregarFila extends HTMLElement {
             console.error(`No se encontró la tabla con id '${targetTableId}'`);
         }
     }
+
+    mostrarMensajeError(mensaje) {
+        const mensajeError = this.querySelector('#mensajeError1');
+        mensajeError.setAttribute('mensaje', mensaje);
+
+        // Ocultar el mensaje de error después de 3 segundos
+        setTimeout(() => {
+            mensajeError.setAttribute('mensaje', '');
+        }, 3000);
+    }
 }
+
+
 customElements.define('formulario-agregar-fila', FormularioAgregarFila);
